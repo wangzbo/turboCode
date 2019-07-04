@@ -1,4 +1,4 @@
-//±¾³ÌĞò¿ÉÒÔ½øĞĞµÄ±àÒëÂë³¤¶ÈÎª8+2*n;18+3*n,32+4*n,50+5*n,72+6*n,98+7*n,128+8*n,162+9*n,200+10*n,242+11*nµÈ
+//æœ¬ç¨‹åºå¯ä»¥è¿›è¡Œçš„ç¼–è¯‘ç é•¿åº¦ä¸º8+2*n;18+3*n,32+4*n,50+5*n,72+6*n,98+7*n,128+8*n,162+9*n,200+10*n,242+11*nç­‰
 #define Ea 0.8862
 #include <iostream>
 #include <fstream>                        //new added
@@ -8,33 +8,33 @@
 #include <ctime>
 #include <cmath>
 using namespace std;
-//º¯ÊıÉùÃ÷
-void A(void);//¼ÆËãAº¯Êı
-void B(void);//¼ÆËãBº¯Êı
-void R(void);//¼ÆËãRº¯Êı
-char* juanjima(char* str);   //±àÂëº¯Êı
-char* interleave(char* str); //½»Ö¯º¯Êı
-char* decoder(int n);        //ÒëÂëº¯Êı
-int* suijichongpai (int a);  //Ëæ»úÅÅÁĞº¯Êı
-int* SuiJiChongPai (int a);
-double*AWGN(int C,double N0);//AWGN²úÉúº¯Êı
+//å‡½æ•°å£°æ˜
+void A(void);//è®¡ç®—Aå‡½æ•°
+void B(void);//è®¡ç®—Bå‡½æ•°
+void R(void);//è®¡ç®—Rå‡½æ•°
+char* convolutional(char* str);   //ç¼–ç å‡½æ•°
+char* interleave(char* str); //äº¤ç»‡å‡½æ•°
+char* decoder(int n);        //è¯‘ç å‡½æ•°
+int* shuffle (int a);  //éšæœºæ’åˆ—å‡½æ•°
+int* shuffle2 (int a);
+double*AWGN(int C,double N0);//AWGNäº§ç”Ÿå‡½æ•°
 double* rayleigh(double fm,int M,int N,double sigma);
-double max0(int s00,int s01,int s,int k);//µÚÒ»¸ömax*()
-double max1(int k);                      //µÚ¶ş¸ömax*()
-double max2(int s00,int s01,int s,int k);//µÚÈı¸ömax*()
-inline double modifyfunction(double a,double b);//ĞŞÕıº¯Êı
-//È«¾Ö±äÁ¿ÉùÃ÷
+double max0(int s00,int s01,int s,int k);//ç¬¬ä¸€ä¸ªmax*()
+double max1(int k);                      //ç¬¬äºŒä¸ªmax*()
+double max2(int s00,int s01,int s,int k);//ç¬¬ä¸‰ä¸ªmax*()
+inline double modifyfunction(double a,double b);//ä¿®æ­£å‡½æ•°
+//å…¨å±€å˜é‡å£°æ˜
 int*array1;
 int *array2;
 int arr[3000],Arr[3000];
-int len;      //Ö¡³¤
-double dB;    //ĞÅÔë±È(dBÊı)
-double Eb_N0;//½«dBÊı»¯ÎªÕı³£Êı
-double noise[3000];//´æ´¢Ëæ»úÔëÉùĞòÁĞ
+int len;      //å¸§é•¿
+double dB;    //ä¿¡å™ªæ¯”(dBæ•°)
+double Eb_N0;//å°†dBæ•°åŒ–ä¸ºæ­£å¸¸æ•°
+double noise[3000];//å­˜å‚¨éšæœºå™ªå£°åºåˆ—
 double ray[3000];
-double decodersaver0[1000],decodersaver1[1000],decodersaver2[1000];//ÒëÂëÊ±´æ·Å·ÖÀë³öÀ´µÄĞòÁĞ
+double decodersaver0[1000],decodersaver1[1000],decodersaver2[1000];//è¯‘ç æ—¶å­˜æ”¾åˆ†ç¦»å‡ºæ¥çš„åºåˆ—
 double M[8],Le[1000]={0};                                                                        
-double AA[1000][8],BB[1000][8],RR[1000][8][8];//´æ´¢A,B,Rº¯ÊıµÄÖµ
+double AA[1000][8],BB[1000][8],RR[1000][8][8];//å­˜å‚¨A,B,Rå‡½æ•°çš„å€¼
 char ee1[1000],ee2[1000],ee3[1000];
 clock_t start,start_,finish,finish_;
 double duration,duration_;
@@ -54,16 +54,16 @@ void main()
 	ifstream infile;//("test.txt");             //new added
 	infile.open("image009.png",ios::binary);
 	
-	infile.seekg(0,ios::end);//ÉèÖÃÎÄ¼şÖ¸Õëµ½ÎÄ¼şÁ÷µÄÎ²²¿  //new added
-	streampos ps = infile.tellg();  //¶ÁÈ¡ÎÄ¼şÖ¸ÕëµÄÎ»ÖÃ   //new added
+	infile.seekg(0,ios::end);//è®¾ç½®æ–‡ä»¶æŒ‡é’ˆåˆ°æ–‡ä»¶æµçš„å°¾éƒ¨  //new added
+	streampos ps = infile.tellg();  //è¯»å–æ–‡ä»¶æŒ‡é’ˆçš„ä½ç½®   //new added
     
 	cout<<"File size is "<<ps<<endl;                       //new added
-	infile.seekg(0,ios::beg);//ÉèÖÃÎÄ¼şÖ¸Õëµ½ÎÄ¼şÁ÷µÄÊ×²¿  //new added
+	infile.seekg(0,ios::beg);//è®¾ç½®æ–‡ä»¶æŒ‡é’ˆåˆ°æ–‡ä»¶æµçš„é¦–éƒ¨  //new added
 	
 	ofstream outfile;//("1.txt");                             //new added
 	outfile.open("1.png",ios::binary);
-	if (outfile.fail()){//´íÎó´¦Àí                         //new added
-		cout<<"ÎÄ¼ş´ò¿ª´íÎó"<<endl;                        //new added
+	if (outfile.fail()){//é”™è¯¯å¤„ç†                         //new added
+		cout<<"æ–‡ä»¶æ‰“å¼€é”™è¯¯"<<endl;                        //new added
 		return;                                            //new added
 	}                                                      //new added
 	
@@ -71,10 +71,10 @@ void main()
 	
 	//for(int i=0;i<1000;i++)
 	   //information[i]='!';
-	//cout<<"ÇëÊäÈëÒª½øĞĞ±àÂëµÄĞÅÏ¢ĞòÁĞ£º"<<'\n'<<endl;
+	//cout<<"è¯·è¾“å…¥è¦è¿›è¡Œç¼–ç çš„ä¿¡æ¯åºåˆ—ï¼š"<<'\n'<<endl;
 	//cin>>information;
 	//while (information[len+1]!='!')
-	//len++;                       //È·¶¨³¤¶È
+	//len++;                       //ç¡®å®šé•¿åº¦
 	cout<<"Please enter Eb/N0 in dB :"<<"    ";
 	cin>>dB;  cout<<'\n';
 	Eb_N0=pow(10,dB/10.0);
@@ -90,13 +90,13 @@ void main()
 	cin>>channelflag;  cout<<'\n';
 	   
 	start_=clock();
-	for(int zhenshu=1;zhenshu<=ps/100;zhenshu++) //Ö¡Êı
+	for(int zhenshu=1;zhenshu<=ps/100;zhenshu++) //å¸§æ•°
 	{
 		start=clock();
 		/*for(int i=0;i<len;i++)
 		information[i]=rand()%2+48;*/
 		infile.read(info,100);                              //new added
-		for(int j=0;j<100;j++)   //½«infoµÄÃ¿Ò»×Ö·ûµÄÃ¿Ò»±ÈÌØ´æ³ÉÒ»¸ö×Ö·û
+		for(int j=0;j<100;j++)   //å°†infoçš„æ¯ä¸€å­—ç¬¦çš„æ¯ä¸€æ¯”ç‰¹å­˜æˆä¸€ä¸ªå­—ç¬¦
 		{
 			bitvect=info[j];                                //new added
 			for(int i=7;i>=0;i--)                           //new added
@@ -104,13 +104,13 @@ void main()
 		}
 		
 		char*str=information;
-		char*str1=juanjima(str);
-		//cout<<'\n'<<"±àÂëÆ÷1µÄÊä³öĞòÁĞÎª£º"<<'\n'<<'\n'<<str1<<endl;
+		char*str1=convolutionalCode(str);
+		//cout<<'\n'<<"ç¼–ç å™¨1çš„è¾“å‡ºåºåˆ—ä¸ºï¼š"<<'\n'<<'\n'<<str1<<endl;
 		char*str2=new char[1000];
 		for(int i=0;i<len;i++)
-			*(str2+i)=*(str1+i);            //±£´æstr1
-		char*str3=juanjima(interleave(str));
-		//cout<<'\n'<<"±àÂëÆ÷2µÄÊä³öĞòÁĞÎª£º"<<'\n'<<'\n'<<str3<<endl;
+			*(str2+i)=*(str1+i);            //ä¿å­˜str1
+		char*str3=convolutionalCode(interleave(str));
+		//cout<<'\n'<<"ç¼–ç å™¨2çš„è¾“å‡ºåºåˆ—ä¸ºï¼š"<<'\n'<<'\n'<<str3<<endl;
 		
 		
 		if(malvflag==0)
@@ -124,8 +124,8 @@ void main()
 			else 
 				*(str4+i)=*(str3+(i-1)/2);
 			}
-			*(str4+2*len)='\0';             //½øĞĞ¸´ÓÃ
-			//cout<<'\n'<<"1/2ÂëÂÊµÄTurboÂë±àÂëÎª£º"<<'\n'<<'\n'<<str4<<endl;
+			*(str4+2*len)='\0';             //è¿›è¡Œå¤ç”¨
+			//cout<<'\n'<<"1/2ç ç‡çš„Turboç ç¼–ç ä¸ºï¼š"<<'\n'<<'\n'<<str4<<endl;
 			
 			delete []str2;
 			double guodu[2000];
@@ -137,7 +137,7 @@ void main()
 			for(i=0;i<2*len;i++)
 			{
 				if(*(guodu+i)==0)
-					*(guodu+i)=-1;           //Ó³Éä
+					*(guodu+i)=-1;           //æ˜ å°„
 			}
 			
 			
@@ -145,11 +145,11 @@ void main()
 			{
 				AWGN(2*len,1/Eb_N0);                                      //biaoji
 				for(i=0;i<2*len;i++)
-					*(guodu+i)+=noise[i];         //Ä£ÄâAWGNĞÅµÀ
+					*(guodu+i)+=noise[i];         //æ¨¡æ‹ŸAWGNä¿¡é“
 			}
 			else
 			{
-				array2=SuiJiChongPai(2*len);
+				array2=shuffle2(2*len);
 				
 				for(i=0;i<2*len;i++)
 				{
@@ -165,7 +165,7 @@ void main()
 				AWGN(2*len,1/Eb_N0); 
 				
 				for(i=0;i<2*len;i++)
-					*(guodu+i)+=noise[i];         //Ä£ÄâAWGNĞÅµÀ
+					*(guodu+i)+=noise[i];         //æ¨¡æ‹ŸAWGNä¿¡é“
 				
 				for(i=0;i<2*len;i++)
 				{
@@ -187,14 +187,14 @@ void main()
 				*(decodersaver1+(i-1)/2+1)=*(guodu+i);
 			else 
 				*(decodersaver2+(i-1)/2+1)=*(guodu+i);
-			}                                //·ÖÀë¸÷¸öĞòÁĞ
+			}                                //åˆ†ç¦»å„ä¸ªåºåˆ—
 			for(i=0;i<len;i++)
 			{
 				if(i%2==0)
 					*(decodersaver2+i+1)=0;
 				else
 					*(decodersaver1+i+1)=0;
-			}                                //ÔÚÉ¾³ıÎ»Ìí¼ÓĞéÄâ±ÈÌØ
+			}                                //åœ¨åˆ é™¤ä½æ·»åŠ è™šæ‹Ÿæ¯”ç‰¹
 			
 		}
 		
@@ -209,8 +209,8 @@ void main()
 			else 
 				*(str4+i)=*(str3+(i-2)/3);
 			}
-			*(str4+3*len)='\0';             //½øĞĞ¸´ÓÃ
-			//cout<<'\n'<<"1/3ÂëÂÊµÄTurboÂë±àÂëÎª£º"<<'\n'<<'\n'<<str4<<endl;
+			*(str4+3*len)='\0';             //è¿›è¡Œå¤ç”¨
+			//cout<<'\n'<<"1/3ç ç‡çš„Turboç ç¼–ç ä¸ºï¼š"<<'\n'<<'\n'<<str4<<endl;
 			
 			delete []str2;
 			double guodu[3000];
@@ -222,19 +222,19 @@ void main()
 			for(i=0;i<3*len;i++)
 			{
 				if(*(guodu+i)==0)
-					*(guodu+i)=-1;           //Ó³Éä
+					*(guodu+i)=-1;           //æ˜ å°„
 			}
 			
 			if(channelflag==0)
 			{
 				AWGN(3*len,1.5/Eb_N0);                                     //biaoji
 				for(i=0;i<3*len;i++)
-					*(guodu+i)+=noise[i];         //Ä£ÄâAWGNĞÅµÀ
+					*(guodu+i)+=noise[i];         //æ¨¡æ‹ŸAWGNä¿¡é“
 			}
 			else
 			{
 				
-				array2=SuiJiChongPai(3*len);
+				array2=shuffle2(3*len);
 				
 				for(i=0;i<3*len;i++)
 				{
@@ -251,7 +251,7 @@ void main()
 				
 				
 				for(i=0;i<3*len;i++)
-					*(guodu+i)+=noise[i];         //Ä£ÄâAWGNĞÅµÀ
+					*(guodu+i)+=noise[i];         //æ¨¡æ‹ŸAWGNä¿¡é“
 				
 				for(i=0;i<3*len;i++)
 				{
@@ -271,15 +271,15 @@ void main()
 				*(decodersaver1+(i-1)/3+1)=*(guodu+i);
 			else 
 				*(decodersaver2+(i-2)/3+1)=*(guodu+i);
-			}                                //·ÖÀë¸÷¸öĞòÁĞ
+			}                                //åˆ†ç¦»å„ä¸ªåºåˆ—
 		}
-		//cout<<'\n'<<"LOG-MAPËã·¨ÏÂµÄÒëÂë½á¹ûÎª£º"<<'\n'<<'\n'<<decoder(len)<<'\n'<<endl;
+		//cout<<'\n'<<"LOG-MAPç®—æ³•ä¸‹çš„è¯‘ç ç»“æœä¸ºï¼š"<<'\n'<<'\n'<<decoder(len)<<'\n'<<endl;
 		//start=clock();
 		decoder(len);
 		finish=clock();
 		duration=(double)(finish-start)/CLOCKS_PER_SEC;
 		
-		cout<</*"µÚ"<<zhenshu<<"Ö¡´«ÊäÍê±Ï,ºÄÊ±"<<*/duration<<"Ãë."<<endl;
+		cout<</*"ç¬¬"<<zhenshu<<"å¸§ä¼ è¾“å®Œæ¯•,è€—æ—¶"<<*/duration<<"ç§’."<<endl;
 		//cout<<setfill('*')<<setw(161)<<endl;
 		for(i=0;i<len;i++)
 		{  
@@ -302,15 +302,15 @@ outfile.close();                         //new added
 finish_=clock();
 duration_=(double)(finish_-start_)/CLOCKS_PER_SEC;
 
-cout<</*'\n'<<"ËùÓĞÖ¡ÒÑ¾­´«ÊäÍê±Ï,×ÜºÄÊ±"<<*/duration_<<"Ãë"<<"ÒëÂë´íÎó¸öÊıÎª"<<jishu<<'\n'<<endl;
+cout<</*'\n'<<"æ‰€æœ‰å¸§å·²ç»ä¼ è¾“å®Œæ¯•,æ€»è€—æ—¶"<<*/duration_<<"ç§’"<<"è¯‘ç é”™è¯¯ä¸ªæ•°ä¸º"<<jishu<<'\n'<<endl;
 getch();
 
 }
 /////////////////////////////////////////////////////////////////////////////
 
-//Ñ­»·ÏµÍ³¾í»ıÂë±àÂë£¨RSC£©£¬Éú³É¶àÏîÊ½Îªg1=£¨1101£©£¬g2=£¨1011£©
+//å¾ªç¯ç³»ç»Ÿå·ç§¯ç ç¼–ç ï¼ˆRSCï¼‰ï¼Œç”Ÿæˆå¤šé¡¹å¼ä¸ºg1=ï¼ˆ1101ï¼‰ï¼Œg2=ï¼ˆ1011ï¼‰
 
-char* juanjima(char* str)
+char* convolutionalCode(char* str)
 {   
 	int array[1000];
 	int u[1000];
@@ -319,7 +319,7 @@ char* juanjima(char* str)
 	{
 		array[i]=*(str+i)-48;
 	}
-    //ÒÔÉÏ½«×Ö·û´®×ª»¯ÎªÕûÊı
+    //ä»¥ä¸Šå°†å­—ç¬¦ä¸²è½¬åŒ–ä¸ºæ•´æ•°
 	u[0]=array[0];
 	u[1]=(array[1]+u[0])%2;
 	u[2]=(array[2]+u[1])%2;
@@ -335,7 +335,7 @@ char* juanjima(char* str)
 	{
         arra1[i]=(u[i]+u[i-2]+u[i-3])%2;
 	}
-    //ÒÔÉÏ½«»ñµÃ±àÂëĞòÁĞ
+    //ä»¥ä¸Šå°†è·å¾—ç¼–ç åºåˆ—
 	
 	for(i=0;i<len;i++)
 	{
@@ -343,20 +343,20 @@ char* juanjima(char* str)
 	}
 	*(ee1+len)='\0';
 	return ee1;
-	//½«Êı×Ö×ª»¯Îª×Ö·û´®
+	//å°†æ•°å­—è½¬åŒ–ä¸ºå­—ç¬¦ä¸²
 }
 
-//SÎ±Ëæ»ú½»Ö¯Æ÷º¯Êı
+//Sä¼ªéšæœºäº¤ç»‡å™¨å‡½æ•°
 char* interleave(char* str)
 {
-	//×Ö·û´®×ª»¯ÎªÕûÊı
-	int array[1000];//´æ´¢Ô­Ê¼Êı¾İ
+	//å­—ç¬¦ä¸²è½¬åŒ–ä¸ºæ•´æ•°
+	int array[1000];//å­˜å‚¨åŸå§‹æ•°æ®
 	
 	for( int i=0;i<len;i++)
 	{
 		array[i]=*(str+i)-48;
 	}
-	//ÖØÅÅº¯Êı£¨ÉèÖÃ²ÎÊıS£©
+	//é‡æ’å‡½æ•°ï¼ˆè®¾ç½®å‚æ•°Sï¼‰
 	/*	int s;
 	if (int(sqrt(len/2))==0)
 	{
@@ -364,7 +364,7 @@ char* interleave(char* str)
 	}
     else s=int(sqrt(len/2))-1;
 	
-	  array1=suijichongpai(len);//Ê×ÏÈ»ñµÃÒ»ĞĞËæ»úÊı
+	  array1=shuffle(len);//é¦–å…ˆè·å¾—ä¸€è¡Œéšæœºæ•°
 	  
 		int*array11=new int[len+s];
 		
@@ -381,7 +381,7 @@ char* interleave(char* str)
 		  {
 		  while(fabs(array11[i]-array11[j])<s)
 		  {
-		  array1=suijichongpai(len);
+		  array1=shuffle(len);
 		  for(i=s;i<len+s;i++)
 		  { 
 		  *(array11+i)=*(array1+i-s);	
@@ -392,11 +392,11 @@ char* interleave(char* str)
 		  }
 		  }
 	delete[]array11;*/
-	//ÒÔÉÏ¼ìÑéËæ»úĞòÁĞÊÇ·ñÂú×ãÌõ¼ş£¬Ö±µ½µÃ³öÂú×ãÌõ¼şµÄSÎ±Ëæ¼´ĞòÁĞ£¬´æÔÚarray1ÖĞ
+	//ä»¥ä¸Šæ£€éªŒéšæœºåºåˆ—æ˜¯å¦æ»¡è¶³æ¡ä»¶ï¼Œç›´åˆ°å¾—å‡ºæ»¡è¶³æ¡ä»¶çš„Sä¼ªéšå³åºåˆ—ï¼Œå­˜åœ¨array1ä¸­
 	
-    array1=suijichongpai(len);
+    array1=shuffle(len);
 	
-    //ÒÔÏÂµÃµ½±àÂëÆ÷¶şµÄÊä³ö
+    //ä»¥ä¸‹å¾—åˆ°ç¼–ç å™¨äºŒçš„è¾“å‡º
     for(i=0;i<len;i++)
 	{
 		*(ee2+*(array1+i)-1)=char(*(array+i)+48);
@@ -405,7 +405,7 @@ char* interleave(char* str)
 	return ee2;
 }
 
-int* suijichongpai (int a)
+int* shuffle (int a)
 {
 	
 /*int c,p;
@@ -422,7 +422,7 @@ for(i=0;i<a-1;i++)
   arr[p]=c;
   }
   
-	//×¢ÊÍµÄÊÇËæ»úÅÅÁĞ*/
+	//æ³¨é‡Šçš„æ˜¯éšæœºæ’åˆ—*/
 	
 	int zu=int(sqrt(a/2));
 	int arr1[100];
@@ -441,7 +441,7 @@ for(i=0;i<a-1;i++)
 		arr1[i]=arr1[p];
 		arr1[p]=c;
 	}
-	//ÒÔÉÏ¶Ô·Ö×éÊı½øĞĞËæ»úÅÅÁĞ
+	//ä»¥ä¸Šå¯¹åˆ†ç»„æ•°è¿›è¡Œéšæœºæ’åˆ—
 	for(i=0;i<zu;i++)
 		
 	{
@@ -466,7 +466,7 @@ for(i=0;i<a-1;i++)
 			arr2[j+i*(a/zu)]=arr[j];
 		}
 	}
-	//ÒÔÉÏ¶ÔÃ¿×éÀïÃæµÄÊı½øĞĞËæ»úÅÅÁĞ£¬´æÔÚarr2ÖĞ
+	//ä»¥ä¸Šå¯¹æ¯ç»„é‡Œé¢çš„æ•°è¿›è¡Œéšæœºæ’åˆ—ï¼Œå­˜åœ¨arr2ä¸­
 	
     for(i=0;i<zu;i++)
 	{
@@ -476,15 +476,15 @@ for(i=0;i<a-1;i++)
 		}
 	}
 	
-	//ÒÔÉÏ°´ÕÕÓ³Éä¹ØÏµ£¬½«arr2ÖĞ¶ÔÓ¦µ½arrÖĞµÃµ½Ëæ»úĞòÁĞ*/
+	//ä»¥ä¸ŠæŒ‰ç…§æ˜ å°„å…³ç³»ï¼Œå°†arr2ä¸­å¯¹åº”åˆ°arrä¸­å¾—åˆ°éšæœºåºåˆ—*/
 	
 	
 	
-	return arr;//´æ´¢Éú³ÉµÄËæ»úÊı
+	return arr;//å­˜å‚¨ç”Ÿæˆçš„éšæœºæ•°
 }
 
 
-//ÒÔÏÂ²úÉúC¸ö·ş´Ó(0,N0/2)ÕıÌ¬·Ö²¼µÄ¸ßË¹Ëæ»úÔëÉùÊıÖµ£¬´æ·ÅÔÚnoiseÖĞ
+//ä»¥ä¸‹äº§ç”ŸCä¸ªæœä»(0,N0/2)æ­£æ€åˆ†å¸ƒçš„é«˜æ–¯éšæœºå™ªå£°æ•°å€¼ï¼Œå­˜æ”¾åœ¨noiseä¸­
 double*   AWGN(int C,double sigma2)   
 { 
 	for (int j=0;j<C;j++)
@@ -495,26 +495,26 @@ double*   AWGN(int C,double sigma2)
 			n+=(double)rand()/RAND_MAX;   
 		}   
 		
-		n=(n-60)/sqrt(10); //±ê×¼»¯   
+		n=(n-60)/sqrt(10); //æ ‡å‡†åŒ–   
 		
 		noise[j]=sqrt(sigma2)*n; 
 	} 
 	return   noise; 
 }   
 
-//ÒëÂëÄ£¿é:
+//è¯‘ç æ¨¡å—:
 
 char* decoder(int n)
 {  
 	double L[1000],Le1[1000],x[1000],y[1000],W[16];
 	char ee4[1000];
 	int error_num;
-	for(int q=0;q<iteration;q++)//µü´ú10´Î
-	{  //¿ªÊ¼¶Ô±àÂëÆ÷1¼ÆËãÍâĞÅÏ¢
+	for(int q=0;q<iteration;q++)//è¿­ä»£10æ¬¡
+	{  //å¼€å§‹å¯¹ç¼–ç å™¨1è®¡ç®—å¤–ä¿¡æ¯
 		error_num=0;
 		R();
-		A();//¼ÆËãËùÓĞAA
-		B();//¼ÆËãËùÓĞBB
+		A();//è®¡ç®—æ‰€æœ‰AA
+		B();//è®¡ç®—æ‰€æœ‰BB
 		for(int k=1;k<=n;k++)
 		{
 			W[0]=AA[k-1][0]+RR[k][0][4]+BB[k][4];
@@ -549,14 +549,14 @@ char* decoder(int n)
 			Le[k]=L[k]-Le[k]-decodersaver0[k]*Eb_N0*((6-2*malvflag)/3.0);
 		}
 		
-		//±£´æLe
+		//ä¿å­˜Le
 		
 		for(int i=1;i<=len;i++)
 		{
 			Le1[i]=Le[i];
 		}
 		
-		//ÒÔÏÂ¶Ôdecodersaver0ºÍLe½øĞĞ½»Ö¯
+		//ä»¥ä¸‹å¯¹decodersaver0å’ŒLeè¿›è¡Œäº¤ç»‡
 		for(i=0;i<len;i++)
 		{
 			*(x+*(array1+i)-1)=*(decodersaver0+i+1);
@@ -568,7 +568,7 @@ char* decoder(int n)
 			*(Le+i+1)=*(y+i);
 		}
 		
-		//ÒÔÏÂÎªÁËÊ¹ÒëÂëÆ÷2ÄÜ¹»µ÷ÓÃRº¯Êı£¬½»»»decodersaver2ºÍdecodersaver1
+		//ä»¥ä¸‹ä¸ºäº†ä½¿è¯‘ç å™¨2èƒ½å¤Ÿè°ƒç”¨Rå‡½æ•°ï¼Œäº¤æ¢decodersaver2å’Œdecodersaver1
 		for(i=1;i<=len;i++)
 		{
 			*(x+i-1)=*(decodersaver1+i);
@@ -576,7 +576,7 @@ char* decoder(int n)
 			*(decodersaver2+i)=*(x+i-1);
 		}
 		
-		//¿ªÊ¼¶Ô±àÂëÆ÷2¼ÆËãÍâĞÅÏ¢
+		//å¼€å§‹å¯¹ç¼–ç å™¨2è®¡ç®—å¤–ä¿¡æ¯
 		R();
 		A();
 		B();
@@ -614,7 +614,7 @@ char* decoder(int n)
 			L[k]=W[0]-W[8];
 			Le[k]=L[k]-Le[k]-decodersaver0[k]*Eb_N0*((6-2*malvflag)/3.0);
 		}
-		//½»»»decodersaver2ºÍdecodersaver1
+		//äº¤æ¢decodersaver2å’Œdecodersaver1
 		for(i=1;i<=len;i++)
 		{
 			*(x+i-1)=*(decodersaver1+i);
@@ -622,7 +622,7 @@ char* decoder(int n)
 			*(decodersaver2+i)=*(x+i-1);
 		}
 		
-		//¶Ôdecodersaver0ºÍLe½â½»Ö¯
+		//å¯¹decodersaver0å’ŒLeè§£äº¤ç»‡
 		for(i=0;i<len;i++)
 		{
 			*(x+i)=*(decodersaver0+array1[i]);
@@ -670,7 +670,7 @@ return ee3;
 
 }
 
-/*double R(unsigned int k,int s0,int s)  //·µ»ØR£¨k£¬s0£¬s£©µÄÖµ
+/*double R(unsigned int k,int s0,int s)  //è¿”å›Rï¼ˆkï¼Œs0ï¼Œsï¼‰çš„å€¼
 {   
 if((s0==0)&(s==4))
 return 0.5*Le[k]+(decodersaver0[k]+decodersaver1[k])/(1/Eb_N0);
@@ -700,7 +700,7 @@ else
 return -0.5*Le[k]+(decodersaver1[k]-decodersaver0[k])/(1/Eb_N0);
 }*/
 
-void R(void)  //·µ»ØR£¨k£¬s0£¬s£©µÄÖµ                             //biaoji 
+void R(void)  //è¿”å›Rï¼ˆkï¼Œs0ï¼Œsï¼‰çš„å€¼                             //biaoji 
 {   
 	for(int i=1;i<=len;i++)
 	{
@@ -728,7 +728,7 @@ void R(void)  //·µ»ØR£¨k£¬s0£¬s£©µÄÖµ                             //biaoji
 }
 
 
-void A(void)  //·µ»ØA£¨k£¬s£©µÄÖµ
+void A(void)  //è¿”å›Aï¼ˆkï¼Œsï¼‰çš„å€¼
 {
     AA[0][0]=0;
 	AA[0][1]=-10000;
@@ -751,7 +751,7 @@ void A(void)  //·µ»ØA£¨k£¬s£©µÄÖµ
 	}	
 }
 
-void B(void)  //·µ»ØB£¨k£¬s0£©µÄÖµ
+void B(void)  //è¿”å›Bï¼ˆkï¼Œs0ï¼‰çš„å€¼
 {
     for(int i=0;i<8;i++)
 		BB[len][i]=-2.08;
@@ -768,7 +768,7 @@ void B(void)  //·µ»ØB£¨k£¬s0£©µÄÖµ
 	}
 }
 
-double max0(int s00,int s01,int s,int k)//¶ÔÒ»È·¶¨µÄs£¬ÇóÆäÉÏÒ»×´Ì¬µÄ×î´óÖµ
+double max0(int s00,int s01,int s,int k)//å¯¹ä¸€ç¡®å®šçš„sï¼Œæ±‚å…¶ä¸Šä¸€çŠ¶æ€çš„æœ€å¤§å€¼
 {
 	if(AA[k-1][s00]+RR[k][s00][s]>AA[k-1][s01]+RR[k][s01][s])
 		return AA[k-1][s00]+RR[k][s00][s]+modifyfunction(AA[k-1][s00]+RR[k][s00][s],AA[k-1][s01]+RR[k][s01][s]);
@@ -776,7 +776,7 @@ double max0(int s00,int s01,int s,int k)//¶ÔÒ»È·¶¨µÄs£¬ÇóÆäÉÏÒ»×´Ì¬µÄ×î´óÖµ
 		return AA[k-1][s01]+RR[k][s01][s]+modifyfunction(AA[k-1][s00]+RR[k][s00][s],AA[k-1][s01]+RR[k][s01][s]);
 }
 
-double max1(int k)//¶ÔËùÓĞs£¬ÇóËüÃÇËùÓĞÉÏÒ»×´Ì¬µÄ×î´óÖµ
+double max1(int k)//å¯¹æ‰€æœ‰sï¼Œæ±‚å®ƒä»¬æ‰€æœ‰ä¸Šä¸€çŠ¶æ€çš„æœ€å¤§å€¼
 {  
 	M[0]=max0(0,1,0,k);
     M[1]=max0(2,3,1,k);
@@ -796,7 +796,7 @@ double max1(int k)//¶ÔËùÓĞs£¬ÇóËüÃÇËùÓĞÉÏÒ»×´Ì¬µÄ×î´óÖµ
 	return M[0];
 }
 
-double max2(int s0,int s,int s1,int k)//¶ÔÒ»È·¶¨µÄs0£¬ÇóÆäÏÂÒ»×´Ì¬µÄ×î´óÖµ
+double max2(int s0,int s,int s1,int k)//å¯¹ä¸€ç¡®å®šçš„s0ï¼Œæ±‚å…¶ä¸‹ä¸€çŠ¶æ€çš„æœ€å¤§å€¼
 {  
     if(BB[k][s]+RR[k][s0][s]>BB[k][s1]+RR[k][s0][s1])
 		return BB[k][s]+RR[k][s0][s]+modifyfunction(BB[k][s]+RR[k][s0][s],BB[k][s1]+RR[k][s0][s1]);
@@ -892,7 +892,7 @@ double* rayleigh(double fm,int M,int N,double sigma)
 
 
 
-int* SuiJiChongPai (int a)
+int* shuffle2 (int a)
 {
 	
     int c,p;
