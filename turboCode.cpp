@@ -40,7 +40,7 @@ clock_t start,start_,finish,finish_;
 double duration,duration_;
 int malvflag,decoderflag,channelflag,iteration;
 
-void main()
+int main()
 {  
 	srand((unsigned)time(NULL));
 	char information[1000];
@@ -304,7 +304,7 @@ duration_=(double)(finish_-start_)/CLOCKS_PER_SEC;
 
 cout<</*'\n'<<"所有帧已经传输完毕,总耗时"<<*/duration_<<"秒"<<"译码错误个数为"<<jishu<<'\n'<<endl;
 getch();
-
+return 0;
 }
 /////////////////////////////////////////////////////////////////////////////
 
